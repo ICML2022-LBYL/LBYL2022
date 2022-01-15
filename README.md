@@ -1,6 +1,6 @@
 # LBYL - code
 This is the authors' implementation of the following paper: LeaveBeforeYouLeave: Training-Free Restoration of Pruned Neural Networks Without Fine-Tuning
-<img src="https://github.com/LBYL-2021/LeaveBeforeYouLeave-/blob/main/images/LBYL_figure_1.png" width="100%" height="100%">
+<img src="https://github.com/ICML2022-LBYL/LBYL2022/blob/main/images/LBYL_figure_1.png" width="100%" height="100%">
 
 
 # Contents
@@ -127,7 +127,7 @@ Pruning Criterion : L2 - norm
 ### Hyperparameters 
 
 <p align="center">
-<img src="https://github.com/LBYL-2021/LeaveBeforeYouLeave/blob/main/images/LBYL_hyperparams.png" width="60%" height="60%">
+<img src="https://github.com/ICML2022-LBYL/LBYL2022/blob/main/images/LBYL_hyperparams.png" width="60%" height="60%">
 </p>
 
 ## 3 Comparison of Coreset 
