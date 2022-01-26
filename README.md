@@ -7,7 +7,6 @@ This is the authors' implementation of the following paper: LeaveBeforeYouLeave:
 1. [Requirements](#1-Requirements)<br>
 2. [Pre-trained models and Dataset](#2-Pre-trained-models-and-Dataset)<br>
 3. [Our experimental setting(GPU and CPU)](#3-Our-experimental-setting)<br>
-4. [Comparison of CoreSet]4(#-Comparison-of-Coreset)<br>
 
 ## 1 Requirements
 Python environment & main libraries:
@@ -53,6 +52,12 @@ The following results can be reproduced with command:
 |       70%       |   0.3  |   83.92   |  83.27  |    71.21   |
 |       80%       |   1e-06  |   78.05   |  77.11  |    63.9   |
 
+We offer the implementation of Coreset in LeNet-300-100 on FashionMNIST. If you test the implementation of Coreset, run the below command. 
+
+    python Test_Coreset.py --pruning-ratio 0.5
+    
+    
+    
 
 ### VGG16 on CIFAR-10
 The following results can be reproduced with command:
@@ -74,6 +79,11 @@ The following results can be reproduced with command:
 |       50%       | 0.00004  | 0.0002 |   45.71   |  32.58  |    12.37   |
 
 ### ResNet50 on CIFAR-100
+We only provide implementation of Coreset in ResNet-50 on CIFAR-100 because authors of Coreset did not offer the implementation on CNNs. If you test the Coreset, run the below command 
+
+    python main.py --arch ResNet50 --pretrained ./saved_models/ResNet.cifar100.original.50.pth.tar --model-type coreset --dataset cifar100 --pruning-ratio 0.1
+
+
 The following results can be reproduced with command:
 
     python main.py --arch ResNet50 --pretrained ./saved_models/ResNet.cifar100.original.50.pth.tar --model-type OURS --dataset cifar100 --criterion l2-norm --lamda-1 0.00002 --lamda-2 0.006 --pruning-ratio 0.1
@@ -130,10 +140,7 @@ Pruning Criterion : L2 - norm
 <img src="https://github.com/ICML2022-LBYL/LBYL2022/blob/main/images/LBYL_hyperparams.png" width="60%" height="60%">
 </p>
 
-## 3 Comparison of Coreset 
-blablabla 
 
-
-## 4 Our experimental setting
+## 3 Our experimental setting
 We use NVIDIA Quadro  RTX  6000  GPU  and  Intel  Core  Xeon  Gold5122
 
