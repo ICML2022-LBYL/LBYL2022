@@ -137,19 +137,10 @@ def save_state(model, acc):
             state['state_dict'][key.replace('module.', '')] = \
                 state['state_dict'].pop(key)
 
-    if args.arch == 'ResNet':
-        model_filename = '.'.join([args.arch,
-                                   str(args.depth_wide),
-                                   args.dataset,
-                                   args.model_type,
-                                   args.criterion,
-                                   str(args.pruning_ratio),
-                                   'pth.tar'])
-    else:
+    if args.arch == 'LeNet_300_100':
         model_filename = '.'.join([args.arch,
                                    args.dataset,
-                                   args.model_type,
-                                   args.criterion,
+                                   'Coreset',
                                    str(args.pruning_ratio),
                                    'pth.tar'])
 
@@ -219,41 +210,72 @@ def weight_init(model, decomposed_weight_list):
 
 
 if __name__ == '__main__':
-    args = easydict.EasyDict()
-    args.batch_size = 128  # 128
-    args.test_batch_size = 256
-    args.epochs = 200
-    args.lr = 0.0001  # 0.1
-    args.momentum = 0.9
-    args.weight_decay = 5e-4
-    args.no_cuda = False  # action = 'strore_true', default = false
-    args.seed = 1
-    args.log_interval = 100
-    args.arch = 'LeNet_300_100'  # LeNet_300_100, VGG, ResNet50, ResNet34, ResNet101
-    args.pretrained = './saved_models/LeNet_300_100.original.pth.tar'
-    args.evaluate = True  # False # action = 'store_true', defalut = True
-    args.retrain = True  # action='store_true', default=False
-    args.model_type = 'OURS'  # prune | merge | OURS
-    args.dataset = 'fashionMNIST'  # fashionMNIST |cifar10 | cifar100 | ImageNet
-    args.criterion = 'l2-norm'  # l1-norm | l2-norm | l2-GM | random
-    args.threshold = 0.2
-    args.lamda_1 = 0
-    args.lamda_2 = 0.1
-    args.pruning_ratio = 0.5
-    args.gpu = '0'
-    args.pin_memory = True
-    args.data_loader_workers = 4  # 8
-    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    args.schedule = [100, 200]
-    # args = parser.parse_args()
-    print(args)
+
+    ### settings
+    parser = argparse.ArgumentParser(description='Coreset Implementation on LeNet-300-100')
+    parser.add_argument('--batch-size', type=int, default=128, metavar='N',
+            help='input batch size for training (default: 128)')
+    parser.add_argument('--test-batch-size', type=int, default=256, metavar='N',
+            help='input batch size for testing (default: 256)')
+    parser.add_argument('--epochs', type=int, default=200, metavar='N',
+            help='number of epochs to train (default: 200)')
+    parser.add_argument('--lr', type=float, default=0.1, metavar='LR',
+            help='learning rate (default: 0.1)')
+    parser.add_argument('--momentum', type=float, default=0.9, metavar='M',
+            help='SGD momentum (default: 0.9)')
+    parser.add_argument('--weight-decay', '--wd', default=5e-4, type=float,
+            metavar='W', help='weight decay (default: 5e-4)')
+    parser.add_argument('--no-cuda', action='store_true', default=False,
+            help='disables CUDA training')
+    parser.add_argument('--seed', type=int, default=1, metavar='S',
+            help='random seed (default: 1)')
+    parser.add_argument('--arch', action='store', default='LeNet_300_100',
+            help='network structure: LeNet_300_100')
+    parser.add_argument('--pretrained', action='store', default='./saved_models/LeNet_300_100.original.pth.tar',
+            help='pretrained model')
+    parser.add_argument('--evaluate', action='store_true', default=True, # False
+            help='whether to run evaluation')
+    parser.add_argument('--retrain', action='store_true', default=True, # False
+            help='whether to retrain')
+    parser.add_argument('--dataset', action='store', default='fashionMNIST',
+            help='dataset: fashionMNIST')
+    parser.add_argument('--pruning-ratio', type=float, default=0.5,
+            help='pruning ratio : (default: 0.1)')
+    parser.add_argument('--pin-memory', action='store_true', default=True,
+            help='pin memory : (default: True)')
+    parser.add_argument('--data-loader-workers', type=int, default=4,
+            help='data loader works: (default: 4)')
+    args = parser.parse_args()
     best_acc_list = []
 
+    # args = easydict.EasyDict()
+    # args.batch_size = 128  # 128
+    # args.test_batch_size = 256
+    # args.epochs = 200
+    # args.lr = 0.0001  # 0.1
+    # args.momentum = 0.9
+    # args.weight_decay = 5e-4
+    # args.no_cuda = False  # action = 'strore_true', default = false
+    # args.seed = 1
+    # args.log_interval = 100
+    # args.arch = 'LeNet_300_100'
+    # args.pretrained = './saved_models/LeNet_300_100.original.pth.tar'
+    # args.evaluate = True  # False # action = 'store_true', defalut = True
+    # args.retrain = True  # action='store_true', default=False
+    # args.model_type = 'OURS'  # prune | merge | OURS
+    # args.dataset = 'fashionMNIST'  # fashionMNIST
+    # args.pruning_ratio = 0.5
+    # args.gpu = '0'
+    # args.pin_memory = True
+    # args.data_loader_workers = 4  # 8
+    # os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    # args.schedule = [100, 200]
+    # # args = parser.parse_args()
+    # print(args)
+    # best_acc_list = []
+
     # check options
-    if not (args.model_type in ['merge', 'prune', 'OURS']):
-        print('ERROR: Please choose the correct model type')
-        exit()
-    if not (args.arch in ['LeNet_300_100', 'VGG16', 'ResNet50', 'ResNet34', 'ResNet101']):
+    if not (args.arch in ['LeNet_300_100']):
         print('ERROR: specified arch is not suppported')
         exit()
 
