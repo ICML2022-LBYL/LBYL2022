@@ -857,11 +857,6 @@ class Decompose:
                             self.decompose_weight[index] = pruned
 
 
-                        elif self.model_type == 'OURS':
-                            pruned = original[self.output_channel_index[index], :, :, :]  # 11,16,3,3
-                            input_channel_index = self.output_channel_index[index]
-                            self.decompose_weight[index] = pruned
-
                     # batchNorm
                     elif 'bn1' in layer:
 
